@@ -1,5 +1,6 @@
-export const initialState = {
-    todos: [
+import moment from 'moment';
+
+export const initialState = [
         {
             item: 'Learn about reducers',
             completed: false,
@@ -15,16 +16,28 @@ export const initialState = {
             completed: false,
             id: 3
         }
-    ] 
-};
+    ];
 
-export const toDoReducer = (state, action) => {
+
+export const todoReducer = (state, action) => {
     switch(action.type) {
         case 'ADD_TODO':
-            return{state}
-        case 'TOGGLE_TODO':
-            return{state}
-        case 'COMPLETE_TODO':
-            return{state}
+            return [...state, action.payload]
+        case 'TOGGLE_COMPLETED':
+            let timeCompleted = moment().format("MMMM Do YYYY, h:mm:ss a");
+            return [...state.map(item =>{
+                if(item.id === action.payload) {
+                    return {
+                        ...item, 
+                        completed: !item.completed,
+                        timeCompleted: item.completed === false && timeCompleted,
+                    }
+                };
+                return item;
+            })]
+        case 'CLEAR_COMPLETED':
+            return [...state.filter(item => !item.completed)]
+            default:
+                return state
     }
 }
